@@ -1,0 +1,137 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Vue.js CRUD</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+<body>
+
+<div class="container">
+    <header class="page-header">
+        <div class="branding">
+            <img src="https://vuejs.org/images/logo.png" alt="Logo" title="Home page" class="logo"/>
+            <h1>Vue.js CRUD приложение</h1>
+        </div>
+    </header>
+    <!--<div class="alert alert-warning">-->
+        <!--<strong>Outdated!</strong> Vue 2 implementation can be found <a href="https://codepen.io/mevdschee/pen/BpbEbj">here</a>.-->
+    <!--</div>-->
+    <main id="app">
+        <router-view></router-view>
+    </main>
+</div>
+
+<template id="product-list">
+    <div class="actions">
+        <a class="btn btn-default" v-link="{path: '/add-product'}">
+            <span class="glyphicon glyphicon-plus"></span>
+            Добавить продукт
+        </a>
+    </div>
+    <div class="filters row">
+        <div class="form-group col-sm-3">
+            <label for="search-element">Поиск по названию</label>
+            <input v-model="searchKey" class="form-control" id="search-element" requred/>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Цена</th>
+            <th class="col-sm-2">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="product in products | filterBy searchKey in 'name'">
+            <td>
+                <a v-link="{name: 'product', params: {product_id: product.id}}">{{ product.name }}</a>
+            </td>
+            <td>{{ product.description }}</td>
+            <td>
+                {{ product.price }}
+                <span class="glyphicon glyphicon-euro" aria-hidden="true"></span>
+            </td>
+            <td>
+                <a class="btn btn-warning btn-xs" v-link="{name: 'product-edit', params: {product_id: product.id}}">Редактировать</a>
+                <a class="btn btn-danger btn-xs" v-link="{name: 'product-delete', params: {product_id: product.id}}">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</template>
+
+<template id="add-product">
+    <h2>Добавить новый продукт</h2>
+    <form v-on:submit="createProduct">
+        <div class="form-group">
+            <label for="add-name">Имя</label>
+            <input class="form-control" id="add-name" v-model="product.name" required/>
+        </div>
+        <div class="form-group">
+            <label for="add-description">Описание</label>
+            <textarea class="form-control" id="add-description" rows="10" v-model="product.description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="add-price">Цена, <span class="glyphicon glyphicon-euro"></span></label>
+            <input type="number" class="form-control" id="add-price" v-model="product.price"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a v-link="'/'" class="btn btn-default">Отмена</a>
+    </form>
+</template>
+
+<template id="product">
+    <h2>{{ product.name }}</h2>
+    <b>Описание: </b>
+    <div>{{ product.description }}</div>
+    <b>Цена:</b>
+    <div>{{ product.price }}<span class="glyphicon glyphicon-euro"></span></div>
+    <br/>
+    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    <a v-link="'/'">Возврат к списку продуктов</a>
+</template>
+
+<template id="product-edit">
+    <h2>Редактировать продукт</h2>
+    <form v-on:submit="updateProduct">
+        <div class="form-group">
+            <label for="edit-name">Имя</label>
+            <input class="form-control" id="edit-name" v-model="product.name" required/>
+        </div>
+        <div class="form-group">
+            <label for="edit-description">Описание</label>
+            <textarea class="form-control" id="edit-description" rows="3" v-model="product.description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="edit-price">Цена, <span class="glyphicon glyphicon-euro"></span></label>
+            <input type="number" class="form-control" id="edit-price" v-model="product.price"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a v-link="'/'" class="btn btn-default">Отмена</a>
+    </form>
+</template>
+
+<template id="product-delete">
+    <h2>Удалить продукт {{ product.name }}</h2>
+    <form v-on:submit="deleteProduct">
+        <p>Это действие не может быть отменено.</p>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a v-link="'/'" class="btn btn-default">Отмена</a>
+    </form>
+</template>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/0.7.13/vue-router.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
